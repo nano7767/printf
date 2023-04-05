@@ -1,30 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   case_i.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: svikornv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/26 14:50:21 by svikornv          #+#    #+#             */
-/*   Updated: 2023/03/26 15:13:17 by svikornv         ###   ########.fr       */
+/*   Created: 2023/03/20 17:01:55 by svikornv          #+#    #+#             */
+/*   Updated: 2023/03/22 12:06:33 by svikornv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_H
-# define FT_PRINTF_H
+#include "ft_printf.h"
 
-# include <stdarg.h>
-# include <unistd.h>
-# include "./libft/libft.h"
+int	case_i(int n)
+{
+	int				nb;
+	unsigned int	intlen;
 
-int		case_c(char c);
-int		case_i(int n);
-int		case_u(unsigned int n);
-int		case_d(int n);
-int		case_s(const char *s);
-int		case_p(unsigned long p);
-int		case_x(unsigned long p);
-int		case_ex(unsigned long p);
-int		ft_printf(const char *format, ...);
-
-#endif
+	nb = n;
+	intlen = 1;
+	if (n < 0 && n != -2147483648)
+	{
+		nb = -n;
+		intlen++;
+	}
+	else if (n == -2147483648)
+	{
+		ft_putstr_fd("-2147483648", 1);
+		return (11);
+	}
+	while (nb > 9)
+	{
+		nb = nb / 10;
+		intlen++;
+	}
+	ft_putnbr_fd(n, 1);
+	return (intlen);
+}

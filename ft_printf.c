@@ -3,40 +3,63 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: svikornv <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: svikornv <svikornv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 14:32:59 by svikornv          #+#    #+#             */
-/*   Updated: 2023/03/14 14:33:02 by svikornv         ###   ########.fr       */
+/*   Updated: 2023/03/20 18:04:16 by svikornv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "ft_printf.h"
-#include "libft.h"
 
-int	ft_printf(const char *format, ...)
+static int	check_type(const char *input, void *arg)
 {
-	va_list	args;
-	int		count;
+	int	i;
 
-	count = 0;
-	va_start(args, format);
-	while (*format == '\0')
+	i = 0;
+	if (*input == 'c')
+		i = case_c((int)arg);
+	else if (*input == 's')
+		i = case_s((char *)arg);
+	else if (*input == 'p')
+		i = case_p((unsigned long)arg);
+	else if (*input == 'd')
+		i = case_d((int)arg);
+	else if (*input == 'i')
+		i = case_i((int)arg);
+	else if (*input == 'u')
+		i = case_u((unsigned int)arg);
+	else if (*input == 'x')
+		i = case_x((unsigned int)arg);
+	else if (*input == 'X')
+		i = case_ex((unsigned int)arg);
+	return (i);
+}
+
+int	ft_printf(const char *input, ...)
+{
+	va_list			args;
+	unsigned int	i;
+
+	i = 0;
+	va_start(args, input);
+	while (*input != '\0')
 	{
-		if (*format == '%')
-			*format++;
-		if (*format == 'd' && *format - 1 == '%')
-			pause;	//printf for case 'd'
-		else if (*format == 's' && *format - 1 == '%')
-			pause;	//printf for case 's'
-		else
+		if (*input == '%')
 		{
-			ft_putchar_fd(*format, 1);
-			count++;
+			input++;
+			if (ft_strchr("cspdiuxX", *input))
+				i += check_type(input, va_arg(args, void *));
+			else if (*input == '%')
+				i += case_c('%');
 		}
-		format++;
+		else
+			i = i + case_c(*input);
+		input++;
 	}
 	va_end(args);
-	return (count);				
+	return (i);
 }
